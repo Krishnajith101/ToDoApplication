@@ -2,35 +2,36 @@ package com.event.entity;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.ToString;
 
+@Data
 @Entity
+@Table(name = "event_details")
 public class Event {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonIgnore
-	private int eId;
+	@Column(name = "event_id")
+	private int eventId;
 
 	private String name;
 	private String description;
-	private LocalDateTime dateTime;
 
-	@JsonIgnore
-	private String status = "Pending";
+	@Column(name = "date_time")
+	private LocalDateTime dateTime;
+	private String status;
 
 	public Event() {
 	}
 
 	public Event(String name, String description, LocalDateTime dateTime) {
+		super();
 		this.name = name;
 		this.description = description;
 		this.dateTime = dateTime;
@@ -68,12 +69,8 @@ public class Event {
 		this.status = status;
 	}
 
-	public int geteId() {
-		return eId;
-	}
-
-	public void seteId(int eId) {
-		this.eId = eId;
+	public int getEventId() {
+		return eventId;
 	}
 
 }

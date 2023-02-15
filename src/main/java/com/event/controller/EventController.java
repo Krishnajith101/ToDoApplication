@@ -17,39 +17,39 @@ import com.event.service.EventService;
 
 @RestController
 public class EventController {
-	
+
 	@Autowired
 	EventService eventServ;
-	
+
 	@PostMapping("/event")
 	public Event createEvent(@RequestBody Event event) {
 		return eventServ.saveEvent(event);
 	}
-	
+
 	@PutMapping("/event/{eId}")
 	public Event updateEvent(@RequestBody Event event, @PathVariable int eId) {
 		event.seteId(eId);
 		return eventServ.editEvent(event);
 	}
-	
+
 	@DeleteMapping("/event/{eId}")
 	public String deleteEvent(@PathVariable int eId) {
 		eventServ.delEvent(eId);
 		return "Event Deleted Successfully";
 	}
-	
+
 	@GetMapping("/event")
-	public List<Event> getAllEvents(){
+	public List<Event> getAllEvents() {
 		return eventServ.viewAllEvents();
 	}
-	
+
 	@PutMapping("/event/{eId}/completed")
 	public Event MarkEventsAsCompleted(@PathVariable int eId) {
 		return eventServ.markEventsCompleted(eId);
 	}
-	
+
 	@GetMapping("/event/groupEvents")
-	public Map<String,List<Event>> groupEventsByStatus(){
+	public Map<String, List<Event>> groupEventsByStatus() {
 		return eventServ.groupEvents();
 	}
 }
