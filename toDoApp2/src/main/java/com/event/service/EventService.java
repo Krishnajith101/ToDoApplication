@@ -3,13 +3,13 @@ package com.event.service;
 import java.util.List;
 import java.util.Map;
 
-import com.event.Dto.EventDto;
+import com.event.dto.EventDto;
 
 public interface EventService {
 
 	EventDto createEvent(EventDto eventDto);
 
-	EventDto updateEvent(int eventId, EventDto eventDto);
+	EventDto updateEvent(EventDto eventDto, int eventId);
 
 	void deleteEvent(int eventId);
 

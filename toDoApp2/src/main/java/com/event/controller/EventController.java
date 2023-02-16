@@ -2,8 +2,11 @@ package com.event.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.event.Dto.EventDto;
+import com.event.dto.EventDto;
+import com.event.entity.Event;
+import com.event.response.ResponseObject;
 import com.event.service.EventService;
 
 @RestController
@@ -22,33 +27,39 @@ public class EventController {
 	private EventService eventService;
 
 	@PostMapping("/event")
-	public EventDto createEvent(@RequestBody EventDto eventDto) {
-		return eventService.createEvent(eventDto);
+	public ResponseEntity<ResponseObject> createEvent(@RequestBody EventDto eventDto) {
+		EventDto event = eventService.createEvent(eventDto);
+		return ResponseEntity.ok(new ResponseObject(event, HttpStatus.OK.value(), null));
 	}
 
 	@PutMapping("/event/{eventId}")
-	public EventDto updateEvent(@RequestBody EventDto eventDto, @PathVariable int eventId) {
-		return eventService.updateEvent(eventId, eventDto);
+	public ResponseEntity<ResponseObject> updateEvent(@RequestBody EventDto eventDto, @PathVariable int eventId) {
+
+		EventDto event = eventService.updateEvent(eventDto, eventId);
+		return ResponseEntity.ok(new ResponseObject(event, HttpStatus.OK.value(), null));
 	}
 
 	@DeleteMapping("/event/{eventId}")
-	public String deleteEvent(@PathVariable int eventId) {
+	public ResponseEntity<ResponseObject> deleteEvent(@PathVariable int eventId) {
 		eventService.deleteEvent(eventId);
-		return "Event Deleted Successfully";
+		return ResponseEntity.ok(new ResponseObject("Event deleted successfully", HttpStatus.OK.value()));
 	}
 
 	@GetMapping("/event")
-	public List<EventDto> getAllEvents() {
-		return eventService.getAllEvents();
+	public ResponseEntity<ResponseObject> getAllEvents() {
+		List<EventDto> events = eventService.getAllEvents();
+		return ResponseEntity.ok(new ResponseObject(events, HttpStatus.OK.value(), null));
 	}
 
 	@PutMapping("/event/{eventId}/completed")
-	public EventDto markEventsAsCompleted(@PathVariable int eventId) {
-		return eventService.markEventsAsCompleted(eventId);
+	public ResponseEntity<ResponseObject> markEventsAsCompleted(@PathVariable int eventId) {
+		EventDto eventDto = eventService.markEventsAsCompleted(eventId);
+		return ResponseEntity.ok(new ResponseObject(eventDto, HttpStatus.OK.value(), null));
 	}
 
 	@GetMapping("/event/groupEvents")
-	public Map<String, List<EventDto>> groupEventsByStatus() {
-		return eventService.groupEventsByStatus();
+	public ResponseEntity<ResponseObject> groupEventsByStatus() {
+		Map<String, List<EventDto>> groupEvents = eventService.groupEventsByStatus();
+		return ResponseEntity.ok(new ResponseObject(groupEvents, HttpStatus.OK.value(), null));
 	}
 }

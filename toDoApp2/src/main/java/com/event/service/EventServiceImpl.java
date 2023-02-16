@@ -1,9 +1,10 @@
-package com.event.serviceImpl;
+package com.event.service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -11,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.event.Dto.EventDto;
+import com.event.dto.EventDto;
 import com.event.entity.Event;
 import com.event.repository.EventRepository;
-import com.event.service.EventService;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -29,30 +29,31 @@ public class EventServiceImpl implements EventService {
 	public EventDto createEvent(EventDto eventDto) {
 		Event event = modelMapper.map(eventDto, Event.class);
 		event.setStatus("Pending");
-		event = eventRepository.save(event);
+		eventRepository.save(event);
 		return modelMapper.map(event, EventDto.class);
 	}
 
 	@Override
-	public EventDto updateEvent(int eventId, EventDto eventDto) {
-		Event event = eventRepository.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event not found"));
-		modelMapper.map(eventDto, Event.class);
-		event = eventRepository.save(event);
-		return modelMapper.map(event, EventDto.class);
+	public EventDto updateEvent(EventDto eventDto, int eventId) {
+		Optional<Event> event = eventRepository.findById(eventId);
+		Event updateEvent = event.get();
+		updateEvent.setName(eventDto.getName());
+		updateEvent.setDescription(eventDto.getDescription());
+		updateEvent.setDateTime(eventDto.getDateTime());
+		eventRepository.save(updateEvent);
+		return modelMapper.map(updateEvent, EventDto.class);
 	}
 
 	@Override
 	public void deleteEvent(int eventId) {
-		Event event = eventRepository.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event not found"));
-		eventRepository.delete(event);
+		eventRepository.deleteById(eventId);
 	}
 
 	@Override
 	public List<EventDto> getAllEvents() {
-		List<Event> events = eventRepository.findAll();
-		return events.stream().map(event -> modelMapper.map(event, EventDto.class)).collect(Collectors.toList());
+		return eventRepository.findAll().stream().map(event -> modelMapper.map(event, EventDto.class))
+				.collect(Collectors.toList());
+
 	}
 
 	@Override
@@ -81,10 +82,9 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventDto markEventsAsCompleted(int eventId) {
-		Event event = eventRepository.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+		Event event = eventRepository.findById(eventId).get();
 		event.setStatus("Completed");
-		event = eventRepository.save(event);
+		eventRepository.save(event);
 		return modelMapper.map(event, EventDto.class);
 	}
 }
